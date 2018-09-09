@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mb-4">Sign Up</h1>
+    <hr>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-primary w-100 mt-3" type="submit">Sign Up</button>
+        <script>
+            $('input').addClass('form-control')
+        </script>
+    </form>
+{% endblock content %}
+    
