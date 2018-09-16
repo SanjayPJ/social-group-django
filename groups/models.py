@@ -1,21 +1,27 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 
-User = get_user_model()
 
 class Group(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField()
-    description = models.TextField(blank=True, default=True)
+    slug = models.SlugField(blank=True)
+    description = models.TextField(blank=True, null=True)
+    members = models.ManyToManyField(
+        User, blank=True, related_name='members')
 
     def __str__(self):
         return self.name
 
-class GrupMember(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)    
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.user.username
+    def get_absolute_url(self):
+        return reverse("groups:detail", kwargs={"slug": self.slug})
+
+    class Meta:
+        ordering = ['-pk', ]
